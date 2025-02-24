@@ -13,8 +13,9 @@ const AddBooking = () => {
     idunit: "",
     jumlah_jam: "",
     tanggal_booking: "",
+    tanggal_selesai: "",
     metode_pembayaran: "cash",
-    status: "Pending",
+    status: "",
     harga_booking: 0,
   });
 
@@ -33,7 +34,8 @@ const AddBooking = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      setMembers(data);
+      const filteredData = data.filter((member) => !member.deleted_at);
+      setMembers(filteredData);
     } catch (error) {
       console.error("Gagal mengambil data member:", error);
     }
@@ -45,7 +47,12 @@ const AddBooking = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      setTempats(data.filter((tempat) => tempat.status === "tersedia"));
+
+      // Filter hanya tempat yang tidak memiliki deleted_at dan memiliki status tersedia
+      const filteredData = data.filter(
+        (tempat) => !tempat.deleted_at && tempat.status === "tersedia"
+      );
+      setTempats(filteredData);
     } catch (error) {
       console.error("Gagal mengambil data tempat:", error);
     }
@@ -57,19 +64,40 @@ const AddBooking = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      setUnits(data);
+
+      // Filter hanya unit yang tidak memiliki deleted_at dan memiliki status tersedia
+      const filteredData = data.filter(
+        (unit) => !unit.deleted_at && unit.status === "tersedia"
+      );
+      setUnits(filteredData);
     } catch (error) {
       console.error("Gagal mengambil data unit PS:", error);
     }
   };
+  
+
+const calculateEndTime = (startDate, duration) => {
+  if (!startDate || !duration) return "";
+  const startDateTime = new Date(startDate);
+  startDateTime.setHours(startDateTime.getHours() + parseInt(duration));
+
+  const year = startDateTime.getFullYear();
+  const month = String(startDateTime.getMonth() + 1).padStart(2, "0");
+  const day = String(startDateTime.getDate()).padStart(2, "0");
+  const hours = String(startDateTime.getHours()).padStart(2, "0");
+  const minutes = String(startDateTime.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newFormData = { ...formData, [name]: value };
 
-    if (name === "jumlah_jam") {
-      const jumlahJam = parseInt(value) || 0;
-      newFormData.harga_booking = hargaPerJam * jumlahJam;
+    if (name === "jumlah_jam" || name === "tanggal_booking") {
+      newFormData.jumlah_pembayaran = hargaPerJam * (parseInt(newFormData.jumlah_jam) || 0);
+      newFormData.tanggal_selesai = calculateEndTime(newFormData.tanggal_booking, newFormData.jumlah_jam);
     }
 
     setFormData(newFormData);
@@ -86,6 +114,7 @@ const AddBooking = () => {
       ...formData,
       idunit,
       harga_booking: harga * (parseInt(formData.jumlah_jam) || 1),
+      tanggal_selesai: calculateEndTime(formData.tanggal_booking, formData.jumlah_jam),
     });
   };
 
@@ -109,7 +138,7 @@ const AddBooking = () => {
     try {
       const response = await fetch("http://localhost:3000/api/booking", {
         method: "POST",
-        mode:"cors",
+        mode: "cors",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -129,6 +158,39 @@ const AddBooking = () => {
       console.error("Gagal menambahkan booking:", error);
       Swal.fire("Error!", error.message, "error");
     }
+  };
+
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    let newFormData = { ...formData, [name]: value };
+
+    // Jika jumlah jam sudah diisi, langsung hitung tanggal selesai
+    if (name === "tanggal_booking" && formData.jumlah_jam) {
+      let startDate = new Date(value);
+
+      // Tambahkan jumlah jam ke tanggal booking
+      startDate.setHours(startDate.getHours() + parseInt(formData.jumlah_jam));
+
+      // Format ke input datetime-local sesuai format Indonesia
+      newFormData.tanggal_selesai = formatDateToLocalIndonesia(startDate);
+    }
+
+    setFormData(newFormData);
+  };
+
+  const formatToIndonesianTime = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    return date
+      .toLocaleString("id-ID", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false, 
+      })
+      .replace(/\//g, "-"); 
   };
 
   return (
@@ -196,6 +258,25 @@ const AddBooking = () => {
                     </select>
                   </div>
 
+
+                  <div className="form-group">
+                    <label>Tanggal Booking</label>
+                    <input
+                      type="datetime-local"
+                      name="tanggal_booking"
+                      className="form-control"
+                      value={formData.tanggal_booking || ""}
+                      onChange={handleDateChange}
+                      required
+                    />
+                  </div>
+                  <input
+                      type="text"
+                      className="form-control"
+                      value={formatToIndonesianTime(formData.tanggal_selesai)}
+                      disabled
+                    />
+
                   <div className="form-group">
                     <label>Jumlah Jam</label>
                     <input
@@ -215,19 +296,16 @@ const AddBooking = () => {
                       type="text"
                       className="form-control"
                       value={`Rp ${formData.harga_booking}`}
-                      disabled
                     />
                   </div>
-
+                  
                   <div className="form-group">
-                    <label>Tanggal Booking</label>
+                    <label>Jumlah Pembayaran</label>
                     <input
-                      type="date"
-                      name="tanggal_booking"
+                      type="text"
                       className="form-control"
-                      value={formData.tanggal_booking}
-                      onChange={handleChange}
-                      required
+                      value={`Rp ${formData.jumlah_pembayaran || 0}`}
+                      disabled
                     />
                   </div>
 
@@ -242,6 +320,36 @@ const AddBooking = () => {
                     >
                       <option value="cash">Cash</option>
                       <option value="transfer">Transfer</option>
+                    </select>
+                  </div>
+                 
+                  <div className="form-group">
+                    <label>Status Booking</label>
+                    <select
+                      name="status"
+                      className="form-control"
+                      required
+                    >
+                      <option value="tertunda">Pending</option>
+                      <option value="berlangsung">Berlangsung</option>
+                      <option value="selesai">Selesai</option>
+                      <option value="dibatalkan">Dibatalkan</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Status Pembayaran</label>
+                    <select
+                      name="status_pembayaran"
+                      className="form-control"
+                      value={formData.status_pembayaran}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="dibayar">Dibayar</option>
+                      <option value="belum_dibayar">Belum Dibayar</option>
+                      <option value="tertunda">Tertunda</option>
+                      <option value="dibatalkan">Dibatalkan</option>
                     </select>
                   </div>
 

@@ -77,15 +77,30 @@ const storeBooking = (req, res) => {
 
 
 const EditBooking = (req, res) => {
-    const { idmember, idtempat, tanggal_booking, tanggal_selesai, jumlah_jam, harga_booking, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status } = req.body;
+    console.log("Data dari request body:", req.body);
+    console.log("Params:", req.params);
+
+    let {
+        idmember, idtempat, idunit, tanggal_booking, tanggal_selesai, jumlah_jam, 
+        harga_booking, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status
+    } = req.body;
+
     const { idbooking } = req.params;
-    Booking.updateBooking(idbooking, idmember, idtempat, tanggal_booking, tanggal_selesai, jumlah_jam, harga_booking, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status, (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
+
+    Booking.updateBooking(
+        idbooking, idmember, idtempat, idunit, tanggal_booking, tanggal_selesai, 
+        jumlah_jam, harga_booking, metode_pembayaran, jumlah_pembayaran, 
+        status_pembayaran, status, 
+        (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(200).json("Update Booking Berhasil");
         }
-        res.status(200).json("Update Booking Berhasil");
-    });
+    );
 };
+
+
 
 const DestroyBooking = (req, res) => {
     const {id} = req.params;

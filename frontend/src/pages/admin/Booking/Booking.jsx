@@ -96,6 +96,14 @@ const Booking = () => {
       }
     });
   };
+  const formatRupiah = (angka) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(angka);
+  };
+  
 
   return (
     <>
@@ -124,6 +132,7 @@ const Booking = () => {
                     <th>Jumlah Jam</th>
                     <th>Harga</th>
                     <th>Pembayaran</th>
+                    <th>Jumlah Pembayaran</th>
                     <th>Status</th>
                     <th>Edit</th>
                     <th>Hapus</th>
@@ -132,7 +141,6 @@ const Booking = () => {
                 <tbody>
                   {dataBooking.length > 0 ? (
                     dataBooking.map((item, index) => {
-                      // Cari nama member berdasarkan idmember
                       const member = members.find((m) => m.idmember === item.idmember);
                       const namaMember = member ? member.nama : "Tidak ditemukan";
 
@@ -152,8 +160,9 @@ const Booking = () => {
                           <td>{new Date(item.tanggal_booking).toLocaleString("id-ID", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</td>
                           <td>{new Date(item.tanggal_selesai).toLocaleString("id-ID", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</td>
                           <td>{item.jumlah_jam} jam</td>
-                          <td>Rp {item.harga_booking}</td>
+                          <td>{formatRupiah(item.harga_booking)}</td>
                           <td>{item.metode_pembayaran} ({item.status_pembayaran})</td>
+                          <td>{formatRupiah(item.jumlah_pembayaran)}</td>
                           <td>{item.status}</td>
                           <td>
                             <Link to={`/admin/editbooking/${item.idbooking}`} className="btn btn-warning btn-sm">

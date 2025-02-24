@@ -47,7 +47,7 @@ function App() {
             <Route path='editsewa/:idsewa' element={<EditSewa/>} />
             <Route path='booking' element = {<Booking/>}/>
             <Route path='addbooking' element = {<AddBooking/>}/>
-            <Route path='editbooking/:id' element = {<EditBooking/>}/>
+            <Route path='editbooking/:idbooking' element = {<EditBooking/>}/>
           </Route>
           <Route path='/' element= {<Authlayout/>}>
             <Route path='/' element = {<Login/>}/>

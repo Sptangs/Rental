@@ -26,11 +26,11 @@ const selectByIdSewa = (idsewa, callback) => {
     const q = "SELECT * FROM sewa WHERE idsewa = ?";
     koneksi.query(q, [idsewa], callback);
 };
-
-const updateSewa = (idsewa, idmember, idunit, tanggal_sewa, tanggal_kembali, jumlah_hari, harga_sewa, denda, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status, callback) => {
-    const q = "UPDATE sewa SET idmember = ?, idunit = ?, tanggal_sewa = ?, tanggal_kembali = ?, jumlah_hari = ?, harga_sewa = ?, denda = ?, metode_pembayaran = ?, jumlah_pembayaran = ?, status_pembayaran = ?, status = ?, updated_at = NOW() WHERE idsewa = ?";
-    koneksi.query(q, [idmember, idunit, tanggal_sewa, tanggal_kembali, jumlah_hari, harga_sewa, denda, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status, idsewa], callback);
+const updateSewa = (idsewa, idmember, idunit, jumlah_hari, tanggal_sewa, tanggal_kembali, harga_sewa, denda, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status, callback) => {
+    const query = `UPDATE sewa SET idmember=?, idunit=?, jumlah_hari=?, tanggal_sewa=?, tanggal_kembali=?, harga_sewa=?, denda=?, metode_pembayaran=?, jumlah_pembayaran=?, status_pembayaran=?, status=? WHERE idsewa=?`;
+    koneksi.query(query, [idmember, idunit, jumlah_hari, tanggal_sewa, tanggal_kembali, harga_sewa, denda, metode_pembayaran, jumlah_pembayaran, status_pembayaran, status, idsewa], callback);
 };
+
 
 const deleteSewa = (id, callback) => {
     if(id){

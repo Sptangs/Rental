@@ -27,48 +27,57 @@ const StoreSewa = (req, res) => {
 };
 
 const EditSewa = (req, res) => {
-    const {
-        idmember, idunit, jumlah_hari, tanggal_sewa, tanggal_kembali,
-        harga_sewa, denda, metode_pembayaran, jumlah_pembayaran,
-        status_pembayaran, status
-    } = req.body;
+    try {
+        const {
+            idmember, idunit, jumlah_hari, tanggal_sewa, tanggal_kembali,
+            harga_sewa, denda = 0, metode_pembayaran, jumlah_pembayaran,
+            status_pembayaran, status
+        } = req.body;
 
-    const { idsewa } = req.params;
+        const { idsewa } = req.params;
 
-    // Validasi ID Sewa
-    if (!idsewa) {
-        return res.status(400).json({ error: "ID Sewa harus disediakan" });
-    }
-
-    // Validasi data yang diperlukan
-    if (
-        !idmember || !idunit || !jumlah_hari || !tanggal_sewa || !tanggal_kembali ||
-        !harga_sewa || !metode_pembayaran || !jumlah_pembayaran ||
-        !status_pembayaran || !status
-    ) {
-        return res.status(400).json({ error: "Semua field harus diisi" });
-    }
-
-    console.log(`Mengupdate penyewaan dengan ID: ${idsewa}`);
-
-    // Panggil fungsi updateSewa
-    Sewa.updateSewa(
-        idsewa, idmember, idunit, jumlah_hari, tanggal_sewa,
-        tanggal_kembali, harga_sewa, denda, metode_pembayaran,
-        jumlah_pembayaran, status_pembayaran, status,
-        (err, result) => {
-            if (err) {
-                console.error("Gagal mengupdate sewa:", err);
-                return res.status(500).json({ error: "Terjadi kesalahan saat mengupdate data" });
-            }
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ error: "Data sewa tidak ditemukan" });
-            }
-            res.status(200).json({ message: "Update data berhasil", data: result });
+        if (!idsewa || isNaN(idsewa)) {
+            return res.status(400).json({ error: "ID Sewa harus berupa angka yang valid" });
         }
-    );
-};
 
+        // Validasi data yang diperlukan
+        if (
+            !idmember || !idunit || !jumlah_hari || !tanggal_sewa || !tanggal_kembali ||
+            !harga_sewa || !metode_pembayaran || !jumlah_pembayaran ||
+            !status_pembayaran || !status
+        ) {
+            return res.status(400).json({ error: "Semua field harus diisi" });
+        }
+
+        // Pastikan nilai angka dikonversi ke integer
+        const jumlahHariInt = parseInt(jumlah_hari, 10) || 1;
+        const hargaSewaInt = parseInt(harga_sewa, 10) || 0;
+        const dendaInt = parseInt(denda, 10) || 0;
+        const jumlahPembayaranInt = parseInt(jumlah_pembayaran, 10) || 0;
+
+        console.log(`🔄 Mengupdate penyewaan dengan ID: ${idsewa}`);
+
+        // Panggil fungsi updateSewa
+        Sewa.updateSewa(
+            idsewa, idmember, idunit, jumlahHariInt, tanggal_sewa,
+            tanggal_kembali, hargaSewaInt, dendaInt, metode_pembayaran,
+            jumlahPembayaranInt, status_pembayaran, status,
+            (err, result) => {
+                if (err) {
+                    console.error("❌ Gagal mengupdate sewa:", err);
+                    return res.status(500).json({ error: "Terjadi kesalahan saat mengupdate data" });
+                }
+                if (result.affectedRows === 0) {
+                    return res.status(404).json({ error: "Data sewa tidak ditemukan" });
+                }
+                res.status(200).json({ message: "✅ Update data berhasil", data: result });
+            }
+        );
+    } catch (error) {
+        console.error("⚠️ Error:", error);
+        res.status(500).json({ error: "Terjadi kesalahan pada server" });
+    }
+};
 
 const showSewa = (req, res) => {
     const idsewa = parseInt(req.params.idsewa, 10); // Konversi ke integer

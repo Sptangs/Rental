@@ -97,9 +97,6 @@ const loginMember = (req, res) => {
     });
 };
 
-
-
-
 module.exports = {
     index,
     StoreMember,
