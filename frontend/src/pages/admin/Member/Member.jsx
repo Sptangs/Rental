@@ -101,7 +101,7 @@ const Members = () => {
                 </Link>
               </div>
               <table className="table table-striped table-bordered mt-2">
-                <thead className="table-light">
+                <thead className="table-light text-center">
                   <tr>
                     <th>No</th>
                     <th>Nama</th>
@@ -124,15 +124,15 @@ const Members = () => {
                         <td>{item.no_hp}</td>
                         <td>{item.alamat}</td>
                         <td>{item.role}</td>
-                        <td>
+                        <td className="text-center">
                           <Link
                             to={`/admin/editmember/${item.idmember}`}
                             className="btn btn-warning btn-sm"
                           >
-                            Edit
+                            <i className="fas fa-edit me-1"></i> Edit
                           </Link>
                         </td>
-                        <td>
+                        <td className="text-center">
                           <button
                             onClick={() => handleDelete(item.idmember)}
                             className="btn btn-danger btn-sm"

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import Swal from "sweetalert2";
 
 const AddMeja = () => {
   const [formData, setFormData] = useState({
     nomor_tempat: "",
-    status: "tersedia",  // Default status
+    status: "tersedia", // Default status
   });
 
+  const navigate = useNavigate(); // Inisialisasi navigate
   const token = localStorage.getItem("token");
 
   // Handle input field change
@@ -19,9 +20,24 @@ const AddMeja = () => {
     }));
   };
 
-  // Handle form submit
+  // Handle form submit dengan konfirmasi swal
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Konfirmasi sebelum menyimpan
+    const confirmResult = await Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "Data meja akan ditambahkan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, Simpan!",
+      cancelButtonText: "Batal",
+    });
+
+    if (!confirmResult.isConfirmed) return;
+
     try {
       const response = await fetch("http://localhost:3000/api/meja", {
         method: "POST",
@@ -34,15 +50,27 @@ const AddMeja = () => {
 
       if (!response.ok) throw new Error("Gagal menambahkan meja");
 
-      Swal.fire("Success", "Meja berhasil ditambahkan!", "success");
+      // SweetAlert sukses
+      Swal.fire({
+        icon: "success",
+        text: "TAMBAH Berhasil!",
+        timer: 1000,
+        showConfirmButton: false,
+      }).then(() => {
+        navigate("/admin/meja"); // Navigasi setelah sukses
+      });
 
-      // Reset form fields
+      // Reset form setelah berhasil
       setFormData({
         nomor_tempat: "",
-        status: "tersedia",  // Reset status to default
+        status: "tersedia",
       });
     } catch (error) {
-      Swal.fire("Error", error.message, "error");
+      console.error("Error Add meja:", error);
+      Swal.fire({
+        icon: "error",
+        text: "Gagal menambahkan data meja!",
+      });
     }
   };
 

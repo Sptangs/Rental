@@ -74,6 +74,30 @@ const Meja = () => {
       return true;
     });
 
+    const updateStatusMeja = async (idtempat, newStatus) => {
+      try {
+          const response = await fetch(`http://localhost:3000/api/meja/${idtempat}/status`, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`, // Jika menggunakan autentikasi
+              },
+              body: JSON.stringify({ status: newStatus })
+          });
+  
+          if (!response.ok) {
+              throw new Error(`Gagal update status meja, status: ${response.status}`);
+          }
+  
+          const result = await response.json();
+          console.log("Berhasil update status meja:", result);
+          tampilData(); // Refresh data di tabel setelah update
+      } catch (error) {
+          console.error("Gagal update status meja:", error);
+      }
+  };
+  
+
   return (
     <>
       <section className="content">
@@ -90,7 +114,7 @@ const Meja = () => {
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="form-select w-25"
+                  className="form-control w-25"
                 >
                   <option value="all">Tampilkan Semua</option>
                   <option value="available">Tampilkan Meja Tersedia</option>
@@ -114,11 +138,12 @@ const Meja = () => {
                 </Link>
               </div>
 
-              <table className="table table-striped table-bordered mt-2">
+              <table className="table table-striped table-bordered mt-2 text-center">
                 <thead className="table-light">
                   <tr>
                     <th>No</th>
                     <th>Nomor Meja</th>
+                    <th>Status</th>
                     <th>Status</th>
                     <th>Edit</th>
                     <th>Hapus</th>
@@ -132,11 +157,22 @@ const Meja = () => {
                         <td>{item.nomor_tempat}</td>
                         <td>{item.status}</td>
                         <td>
+                          <select
+                            className="form-control"
+                            value={item.status}
+                            onChange={(e) => updateStatusMeja(item.idtempat, e.target.value)}
+                          >
+                            <option value="tersedia">Tersedia</option>
+                            <option value="dipakai">Dipakai</option>
+                            <option value="dibooking">Dibooking</option>
+                          </select>
+                        </td>
+                        <td>
                           <Link
                             to={`/admin/editmeja/${item.idtempat}`}
                             className="btn btn-warning btn-sm"
                           >
-                            Edit
+                          <i className="	fas fa-edit"></i> Edit
                           </Link>
                         </td>
                         <td>
@@ -144,7 +180,7 @@ const Meja = () => {
                             onClick={() => handleDelete(item.idtempat)}
                             className="btn btn-danger btn-sm"
                           >
-                            Hapus
+                          <i className="	fas fa-trash"></i>Hapus
                           </button>
                         </td>
                       </tr>

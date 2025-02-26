@@ -85,62 +85,72 @@ const EditUser = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mt-10">
-      <h1 className="text-2xl font-bold text-center mb-5">Edit Data User</h1>
-      <form onSubmit={handleUpdate} className="space-y-4">
-        <div>
-          <label className="block text-gray-700">Nama</label>
-          <input 
-            type="text" 
-            className="w-full p-2 border rounded" 
-            value={nama} 
-            onChange={(e) => setNama(e.target.value)} 
-            required 
-          />
+    <div className="container mt-5">
+      <div className="card shadow-lg">
+        <div className="card-body">
+        <div className="card-body" style={{ fontFamily: "'Poppins', sans-serif" }}>
+  <h1 className="card-title text-center mb-4 fw-bold">
+    <i className="fas fa-user-edit me-2"></i> Edit Data User
+  </h1>
+</div>
+
+          <form onSubmit={handleUpdate}>
+            <div className="mb-3">
+              <label className="form-label">Nama</label>
+              <input 
+                type="text" 
+                className="form-control" 
+                value={nama} 
+                onChange={(e) => setNama(e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Email</label>
+              <input 
+                type="email" 
+                className="form-control" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Password</label>
+              <input 
+                type="password" 
+                className="form-control" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                placeholder="Kosongkan jika tidak ingin mengubah" 
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Role</label>
+              <select 
+                className="form-control" 
+                value={role} 
+                onChange={(e) => setRole(e.target.value)} 
+                required
+              >
+                <option value="">Pilih Role</option>
+                <option value="admin">Admin</option>
+                <option value="operator">Operator</option>
+                <option value="restock">Restock</option>
+              </select>
+            </div>
+            <button 
+              type="submit" 
+              className="btn btn-primary w-100"
+            >
+              Simpan
+            </button>
+          </form>
         </div>
-        <div>
-          <label className="block text-gray-700">Email</label>
-          <input 
-            type="email" 
-            className="w-full p-2 border rounded" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700">Password</label>
-          <input 
-            type="password" 
-            className="w-full p-2 border rounded" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            placeholder="Kosongkan jika tidak ingin mengubah" 
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700">Role</label>
-          <select 
-            className="w-full p-2 border rounded" 
-            value={role} 
-            onChange={(e) => setRole(e.target.value)} 
-            required
-          >
-            <option value="">Pilih Role</option>
-            <option value="admin">Admin</option>
-            <option value="operator">Operator</option>
-            <option value="restock">Restock</option>
-          </select>
-        </div>
-        <button 
-          type="submit" 
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Simpan
-        </button>
-      </form>
+      </div>
     </div>
   );
+  
 };
 
 export default EditUser;

@@ -22,6 +22,7 @@ import EditMeja from './pages/admin/Meja/EditMeja';
 import LogMember from './pages/auth/LoginMember';
 import EditSewa from './pages/admin/Sewa/EditSewa';
 import EditBooking from './pages/admin/Booking/EditBooking';
+import HomeMember from './pages/Home/Home';
 
 function App() {
   return(
@@ -34,7 +35,7 @@ function App() {
             <Route path="edituser/:id" element={<EditUser />} />
             <Route path='member' element = {<Members/>} />
             <Route path='addmember' element = {<AddMember/>} />
-            <Route path='editmember/:id' element={<EditMember/>} />
+            <Route path='editmember/:idmember' element={<EditMember/>} />
             <Route path='adduser' element={<AddUser/>}/>
             <Route path='unit' element={<UnitPS/>} />
             <Route path='addunit' element={<AddUnit/>} />
@@ -52,6 +53,7 @@ function App() {
           <Route path='/' element= {<Authlayout/>}>
             <Route path='/' element = {<Login/>}/>
             <Route path='/logmember' element = {<LogMember/>}/>
+            <Route path='/home' element = {<HomeMember/>}/>
 
           </Route>
         </Routes>

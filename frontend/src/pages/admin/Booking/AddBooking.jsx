@@ -322,20 +322,6 @@ const calculateEndTime = (startDate, duration) => {
                       <option value="transfer">Transfer</option>
                     </select>
                   </div>
-                 
-                  <div className="form-group">
-                    <label>Status Booking</label>
-                    <select
-                      name="status"
-                      className="form-control"
-                      required
-                    >
-                      <option value="tertunda">Pending</option>
-                      <option value="berlangsung">Berlangsung</option>
-                      <option value="selesai">Selesai</option>
-                      <option value="dibatalkan">Dibatalkan</option>
-                    </select>
-                  </div>
 
                   <div className="form-group">
                     <label>Status Pembayaran</label>

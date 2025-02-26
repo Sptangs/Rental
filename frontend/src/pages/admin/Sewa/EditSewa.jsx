@@ -323,9 +323,10 @@ const EditSewa = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="berlangsung">Berlangsung</option>
                       <option value="selesai">Selesai</option>
-                      <option value="dibatalkan">Dibatalkan</option>
+                      <option value="berlangsung">Berlangsung</option>
+                      <option value="tertunda">Tertunda</option>
+                      <option value="dibatalkan">Dibatakan</option>
                     </select>
                   </div>
 
@@ -338,8 +339,8 @@ const EditSewa = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="belum dibayar">Belum Lunas</option>
-                      <option value="lunas">Lunas</option>
+                      <option value="dibayar">Dibayar</option>
+                      <option value="belum dibayar">Belum Dibayar</option>
                       <option value="tertunda">Tertunda</option>
                     </select>
                   </div>

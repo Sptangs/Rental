@@ -226,16 +226,15 @@ const AddSewa = () => {
                   </div>
 
                   <div className="form-group">
-  <label>Tanggal Kembali</label>
-  <input
-    type="date"
-    name="tanggal_kembali"
-    className="form-control"
-    value={formData.tanggal_kembali}
-    readOnly
-  />
-</div>
-
+                    <label>Tanggal Kembali</label>
+                    <input
+                      type="date"
+                      name="tanggal_kembali"
+                      className="form-control"
+                      value={formData.tanggal_kembali}
+                      readOnly
+                    />
+                  </div>
 
                   <div className="form-group">
                     <label>Metode Pembayaran</label>
@@ -250,20 +249,18 @@ const AddSewa = () => {
                       <option value="transfer">Transfer</option>
                     </select>
                   </div>
-
                   <div className="form-group">
-                    <label>Status</label>
+                    <label>Status Pembayaran</label>
                     <select
-                      name="status"
+                      name="status_pembayaran"
                       className="form-control"
-                      value={formData.status}
+                      value={formData.status_pembayaran}
                       onChange={handleChange}
                       required
                     >
+                      <option value="dibayar">Dibayar</option>
+                      <option value="belum dibayar">Belum Dibayar</option>
                       <option value="tertunda">Tertunda</option>
-                      <option value="berlangsung">Berlangsung</option>
-                      <option value="selesai">Selesai</option>
-                      <option value="dibatalkan">Dibatalkan</option>
                     </select>
                   </div>
 

@@ -29,9 +29,16 @@ const deleteMeja = (id, callback) => {
     }
 };
 
+const updateStatusMeja = (idtempat, status, callback) => {
+    const q = "UPDATE meja SET status=? WHERE idtempat=?";
+    koneksi.query(q, [status, idtempat], callback);
+};
+
 module.exports = {
     selectMeja,
     insertMeja,
     updateMeja,
-    deleteMeja
+    deleteMeja,
+    selectMejaById,
+    updateStatusMeja
 }

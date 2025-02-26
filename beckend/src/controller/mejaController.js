@@ -1,4 +1,5 @@
 const Meja = require("../models/meja");
+const { gantiStatusBooking } = require("./bookingController");
 
 const index = (req, res) => {
     Meja.selectMeja((err, result) => {
@@ -60,10 +61,31 @@ const destroyMeja = (req, res) => {
     })
 }
 
+const gantiMeja = (req, res) => {
+    const { status } = req.body;
+    const { idtempat } = req.params;
+
+    if (!status) {
+        return res.status(400).json({ error: "Status harus diberikan" });
+    }
+
+    Meja.updateStatusMeja(idtempat, status, (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Meja tidak ditemukan" });
+        }
+
+        res.json({ message: "Status meja berhasil diperbarui" });
+    });
+};
+
+
 module.exports = {
     index,
     storeMeja,
     editMeja,
     destroyMeja,
-    showMeja
+    showMeja,
+    gantiMeja
 }

@@ -111,7 +111,6 @@ const Login = () => {
                 <i className="fab fa-google-plus mr-2" /> Sign in using Google+
               </a>
             </div>
-            {/* /.social-auth-links */}
             <p className="mb-1">
               <a href="#">I forgot my password</a>
             </p>
@@ -119,7 +118,6 @@ const Login = () => {
               <a href="#" className="text-center">Register a new membership</a>
             </p>
           </div>
-          {/* /.login-card-body */}
         </div>
       </div>
     </>

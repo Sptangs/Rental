@@ -113,10 +113,23 @@ const DestroySewa = (req, res) => {
     });
 };
 
+const gantiStatusSewa = (req, res) => {
+    const { idsewa } = req.params;
+    const { status } = req.body;
+
+    Sewa.updateStatusSewa(idsewa, status, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: "Gagal memperbarui status penyewaan" });
+        }
+        res.json({ message: "Status penyewaan berhasil diperbarui" });
+    });
+};
+
 module.exports = {
     index,
     StoreSewa,
     EditSewa,
     DestroySewa,
-    showSewa
+    showSewa,
+    gantiStatusSewa
 }

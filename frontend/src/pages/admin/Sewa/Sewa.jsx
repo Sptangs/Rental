@@ -14,12 +14,13 @@ const Sewa = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      return data.filter((item) => !item.deleted_at);
+      return data.filter((item) => !item.deleted_at); // Hanya data yang belum dihapus
     } catch (error) {
       console.error("Gagal mengambil data penyewaan:", error);
       return [];
     }
   };
+  
 
   const fetchMembers = async () => {
     try {
@@ -32,7 +33,7 @@ const Sewa = () => {
       return [];
     }
   };
-
+  
   const fetchUnitPS = async () => {
     try {
       const response = await fetch("http://localhost:3000/api/unit", {
@@ -44,33 +45,56 @@ const Sewa = () => {
       return [];
     }
   };
+  
 
   const tampilData = async () => {
     const sewaData = await fetchSewa();
     const membersData = await fetchMembers();
     const unitPSData = await fetchUnitPS();
-
+  
+    // Buat mapping untuk data member
     const memberMap = {};
     membersData.forEach((member) => {
       memberMap[member.idmember] = member.nama;
     });
-
+  
+    // Buat mapping untuk data unit PS
     const unitMap = {};
     unitPSData.forEach((unit) => {
       unitMap[unit.idunit] = unit.jenis_ps;
     });
-
-    const mergedData = sewaData.map((item) => ({
-      ...item,
-      nama_member: memberMap[item.idmember] || "Tidak Diketahui",
-      jenis_ps: unitMap[item.idunit] || "Tidak Diketahui",
-    }));
-
+  
+    // Ambil tanggal hari ini
+    const today = moment().startOf("day"); 
+    
+    const mergedData = sewaData.map((item) => {
+      const tanggalSewa = moment(item.tanggal_sewa).startOf("day");
+      const tanggalKembali = moment(item.tanggal_kembali).startOf("day");
+  
+      let statusTempat = item.status; // Status awal dari database
+  
+      // Jika tanggal sewa sudah tiba dan belum melebihi tanggal kembali, ubah status ke "Dipakai"
+      if (tanggalSewa.isSameOrBefore(today) && tanggalKembali.isSameOrAfter(today)) {
+        statusTempat = "Dipakai";
+      }
+  
+      return {
+        ...item,
+        nama_member: memberMap[item.idmember] || "Tidak Diketahui",
+        jenis_ps: unitMap[item.idunit] || "Tidak Diketahui",
+        status: statusTempat, // Update status otomatis
+      };
+    });
+  
+    // Filter berdasarkan status jika ada filter yang diterapkan
     const filteredData = mergedData.filter(
       (item) => filterStatus === "" || item.status === filterStatus
     );
+  
     setDataSewa(filteredData);
   };
+  
+  
 
   useEffect(() => {
     tampilData();
@@ -106,6 +130,40 @@ const Sewa = () => {
       }
     });
   };
+
+  const handleUpdateStatus = async (idsewa, newStatus) => {
+    Swal.fire({
+        title: "Update Status",
+        text: `Yakin ingin mengubah status menjadi "${newStatus}"?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Update",
+        cancelButtonText: "Batal",
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/sewa/${idsewa}/status`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`, // Jika menggunakan autentikasi
+                    },
+                    body: JSON.stringify({ status: newStatus }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Gagal update status, status: ${response.status}`);
+                }
+
+                Swal.fire("Berhasil!", "Status penyewaan diperbarui.", "success");
+                tampilData(); // Refresh data setelah update
+            } catch (error) {
+                console.error("Gagal update status:", error);
+                Swal.fire("Error!", "Gagal memperbarui status.", "error");
+            }
+        }
+    });
+};
 
   // Fungsi untuk format ke Rupiah
   const formatRupiah = (angka) => {
@@ -145,7 +203,7 @@ const Sewa = () => {
               </select>
             </div>
 
-            <table className="table table-striped table-bordered mt-2">
+            <table className="table table-striped table-bordered mt-2 text-center">
               <thead className="table-light">
                 <tr>
                   <th>No</th>
@@ -159,45 +217,59 @@ const Sewa = () => {
                   <th>Pembayaran</th>
                   <th>Jumlah Pembayaran</th>
                   <th>Status</th>
+                  <th>Update Status</th>
                   <th>Edit</th>
                   <th>Hapus</th>
                 </tr>
               </thead>
               <tbody>
-                {dataSewa.length > 0 ? (
-                  dataSewa.map((item, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{item.nama_member}</td>
-                      <td>{item.jenis_ps}</td>
-                      <td>{item.jumlah_hari} hari</td>
-                      <td>{moment(item.tanggal_sewa).format("DD MMM YYYY")}</td>
-                      <td>{moment(item.tanggal_kembali).format("DD MMM YYYY")}</td>
-                      <td>{formatRupiah(item.harga_sewa)}</td>
-                      <td>{formatRupiah(item.denda)}</td>
-                      <td>{item.metode_pembayaran} ({item.status_pembayaran})</td>
-                      <td>{formatRupiah(item.jumlah_pembayaran)}</td>
-                      <td>{item.status}</td>
-                      <td>
-                        <Link to={`/admin/editsewa/${item.idsewa}`} className="btn btn-warning btn-sm">
-                          Edit
-                        </Link>
-                      </td>
-                      <td>
-                        <button onClick={() => handleDelete(item.idsewa)} className="btn btn-danger btn-sm">
-                          Hapus
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="13" className="text-center">
-                      Tidak ada data penyewaan
-                    </td>
-                  </tr>
-                )}
-              </tbody>
+  {dataSewa.length > 0 ? (
+    dataSewa.map((item, index) => (
+      <tr key={index}>
+        <td>{index + 1}</td>
+        <td>{item.nama_member}</td>
+        <td>{item.jenis_ps}</td>
+        <td>{item.jumlah_hari} hari</td>
+        <td>{moment(item.tanggal_sewa).format("DD MMM YYYY")}</td>
+        <td>{moment(item.tanggal_kembali).format("DD MMM YYYY")}</td>
+        <td>{formatRupiah(item.harga_sewa)}</td>
+        <td>{formatRupiah(item.denda)}</td>
+        <td>{item.metode_pembayaran} ({item.status_pembayaran})</td>
+        <td>{formatRupiah(item.jumlah_pembayaran)}</td>
+        <td>{item.status}</td>
+        <td>
+            <select
+              className="form-control"
+              value={item.status}
+              onChange={(e) => handleUpdateStatus(item.idsewa, e.target.value)}
+            >
+              <option value="tertunda">tertunda</option>
+              <option value="berlangsung">berlangsung</option>
+              <option value="selesai">Selesai</option>
+              <option value="dibatalkan">Dibatalkan</option>
+            </select>
+          </td>
+        <td>
+          <Link to={`/admin/editsewa/${item.idsewa}`} className="btn btn-warning btn-sm">
+            <i className="fas fa-edit"></i>
+          </Link>
+        </td>
+        <td>
+          <button onClick={() => handleDelete(item.idsewa)} className="btn btn-danger btn-sm">
+            <i className="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="13" className="text-center">
+        Tidak ada data penyewaan
+      </td>
+    </tr>
+  )}
+</tbody>
+
             </table>
           </div>
         </div>

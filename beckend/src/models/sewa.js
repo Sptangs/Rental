@@ -41,10 +41,17 @@ const deleteSewa = (id, callback) => {
     }
 };
 
+const updateStatusSewa = (idsewa, status, callback) => {
+    const q = "UPDATE sewa SET status=? WHERE idsewa=?";
+    koneksi.query(q, [status, idsewa], callback);
+};
+
+
 module.exports = {
     selectSewa,
     insertSewa,
     updateSewa,
     deleteSewa,
-    selectByIdSewa
+    selectByIdSewa,
+    updateStatusSewa
 }

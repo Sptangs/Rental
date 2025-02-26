@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const User = () => {
-  const [dataUser, setUsers ] = useState([]);
+  const [dataUser, setUsers] = useState([]);
   const token = localStorage.getItem("token");
 
   const tampilData = async () => {
@@ -48,38 +49,13 @@ const User = () => {
         <div className="container-fluid">
           <div className="row">
             <div className="col">
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Link
-  to="/admin/adduser"
-  className="btn btn-primary"
-  style={{
-    borderRadius: "5px",
-    padding: "10px 20px",
-    marginTop:"10px",
-    fontSize: "1rem",
-    background: "linear-gradient(45deg, #e63946, #d4a5a5)", // Gradasi merah terang ke merah gelap
-    color: "#fff", // Warna teks putih agar kontras dengan latar belakang
-    border: "none", // Menghilangkan border default
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Tambahkan bayangan halus agar tombol lebih menonjol
-    transition: "all 0.3s ease", // Menambahkan transisi halus pada hover
-  }}
-  onMouseEnter={(e) => {
-    // Hover effect untuk membuat tombol lebih menarik
-    e.target.style.background = "linear-gradient(45deg, #d4a5a5, #e63946)";
-    e.target.style.transform = "scale(1.05)";
-  }}
-  onMouseLeave={(e) => {
-    // Mengembalikan ke warna semula saat mouse meninggalkan tombol
-    e.target.style.background = "linear-gradient(45deg, #e63946, #d4a5a5)";
-    e.target.style.transform = "scale(1)";
-  }}
->
-  Tambah User
-</Link>
-
-        </div>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Link to="/admin/adduser" className="btn btn-primary">
+                  Tambah User
+                </Link>
+              </div>
               <table className="table table-striped table-bordered mt-2">
-                <thead className="table-light">
+              <thead className="table-light text-center">
                   <tr>
                     <th>No</th>
                     <th>Nama</th>
@@ -98,20 +74,20 @@ const User = () => {
                         <td>{item.nama}</td>
                         <td>{item.email}</td>
                         <td>{item.role}</td>
-                        <td>
+                        <td className="text-center">
                           <Link
                             to={`/admin/edituser/${item.id}`}
                             className="btn btn-warning btn-sm"
                           >
-                            Edit
+                            <FaEdit /> Edit
                           </Link>
                         </td>
-                        <td>
+                        <td className="text-center">
                           <button
                             onClick={() => handleDelete(item.id)}
                             className="btn btn-danger btn-sm"
                           >
-                            Hapus
+                            <FaTrash /> Hapus
                           </button>
                         </td>
                       </tr>

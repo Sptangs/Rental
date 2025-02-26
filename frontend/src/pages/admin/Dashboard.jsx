@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import SewaCard from "./SewaCard";
+import BookingCard from "./BookingCard";
+import ChartPendapatan from "./chartsewa";
+
 
 const Dashboard = () => {
   const [totalSewa, setTotalSewa] = useState(0);
@@ -9,47 +13,36 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      // Ambil data sewa
       const responseSewa = await fetch("http://localhost:3000/api/sewa", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const dataSewa = await responseSewa.json();
-      console.log("Data Sewa:", dataSewa);
-      const activeSewa = dataSewa.filter((sewa) => sewa.deleted_at === null); // Filter hanya sewa aktif
-      setTotalSewa(activeSewa.length);
-  
-      // Ambil data booking
+      setTotalSewa(dataSewa.filter((sewa) => sewa.deleted_at === null).length);
+
       const responseBooking = await fetch("http://localhost:3000/api/booking", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const dataBooking = await responseBooking.json();
-      console.log("Data Booking:", dataBooking);
-      const activeBooking = dataBooking.filter((booking) => booking.deleted_at === null);
-      setTotalBooking(activeBooking.length);
-  
-      // Ambil semua data member (TIDAK difilter)
+      setTotalBooking(dataBooking.filter((booking) => booking.deleted_at === null).length);
+
       const responseMember = await fetch("http://localhost:3000/api/members", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const dataMember = await responseMember.json();
-      console.log("Data Member:", dataMember);
-      setTotalMember(dataMember.length); // Semua member ditampilkan
-  
-      // Ambil semua data unit PS (TIDAK difilter)
+      setTotalMember(dataMember.length);
+
       const responseUnit = await fetch("http://localhost:3000/api/unit", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const dataUnit = await responseUnit.json();
-      console.log("Data Unit PS:", dataUnit);
-      setTotalUnit(dataUnit.length); // Semua unit PS ditampilkan
-  
+      setTotalUnit(dataUnit.length);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     }
-  };  
+  };
 
   useEffect(() => {
-    fetchData(); // Fetch pertama kali
+    fetchData();
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -58,7 +51,6 @@ const Dashboard = () => {
     <section className="content">
       <div className="container-fluid">
         <div className="row">
-          {/* Total Sewa */}
           <div className="col-lg-3 col-6">
             <div className="small-box bg-info">
               <div className="inner">
@@ -71,7 +63,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Total Booking */}
           <div className="col-lg-3 col-6">
             <div className="small-box bg-success">
               <div className="inner">
@@ -84,7 +75,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Total Member */}
           <div className="col-lg-3 col-6">
             <div className="small-box bg-warning">
               <div className="inner">
@@ -97,7 +87,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Total Unit PS */}
           <div className="col-lg-3 col-6">
             <div className="small-box bg-danger">
               <div className="inner">
@@ -109,7 +98,21 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+        </div>
 
+        {/* Daftar Sewa */}
+        <div className="mt-4">
+          <SewaCard />
+        </div>
+
+        {/* Daftar Booking */}
+        <div className="mt-4 text-center  ">
+          <BookingCard />
+        </div>
+
+          <div className="container mt-4">
+        <h3 className="text-center">Dashboard Pendapatan</h3>
+        <ChartPendapatan />
         </div>
       </div>
     </section>

@@ -134,6 +134,26 @@ const showBooking = (req, res) => {
     });
 };
 
+const gantiStatusBooking = (req, res) => {
+    const { idbooking } = req.params;
+    const { status } = req.body;
+
+    console.log("Request diterima:", { idbooking, status }); // Cek apakah request masuk
+
+    if (!idbooking || !status) {
+        console.error("Error: ID Booking atau status kosong");
+        return res.status(400).json({ error: "ID Booking atau status tidak boleh kosong" });
+    }
+
+    Booking.updateStatusBooking(idbooking, status, (err, result) => {
+        if (err) {
+            console.error("Gagal update status di database:", err); // Tambahkan log error
+            return res.status(500).json({ error: "Gagal memperbarui status booking" });
+        }
+        console.log("Status booking berhasil diperbarui:", result);
+        res.json({ message: "Status booking berhasil diperbarui" });
+    });
+};
 
 
 module.exports = {
@@ -141,5 +161,6 @@ module.exports = {
     storeBooking,
     EditBooking,
     DestroyBooking,
-    showBooking
+    showBooking,
+    gantiStatusBooking
 }

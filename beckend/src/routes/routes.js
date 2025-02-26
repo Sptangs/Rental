@@ -33,6 +33,7 @@ router.get("/meja", MejaController.index);
 router.get("/meja/:idtempat", MejaController.showMeja);
 router.post("/meja", MejaController.storeMeja);
 router.put("/meja/:idtempat", MejaController.editMeja);
+router.put("/meja/:idtempat/status", MejaController.gantiMeja);
 router.delete("/meja/:id", MejaController.destroyMeja);
 
 router.get("/sewa", SewaController.index);
@@ -40,11 +41,13 @@ router.get("/sewa/:idsewa", SewaController.showSewa);
 router.post("/sewa", SewaController.StoreSewa);
 router.put("/sewa/:idsewa", SewaController.EditSewa);
 router.delete("/sewa/:id", SewaController.DestroySewa);
+router.put("/sewa/:idsewa/status", SewaController.gantiStatusSewa);
 
 router.get("/booking", BookingController.index);
 router.get("/booking/:idbooking", BookingController.showBooking);
 router.post("/booking", BookingController.storeBooking);
 router.put("/booking/:idbooking", BookingController.EditBooking);
+router.put("/booking/:idbooking/status", BookingController.gantiStatusBooking);
 router.delete("/booking/:id", BookingController.DestroyBooking);
 
 module.exports = router;

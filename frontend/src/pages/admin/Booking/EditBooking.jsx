@@ -378,7 +378,7 @@ const EditBooking = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="tertunda">Pending</option>
+                      <option value="tertunda">Tertunda</option>
                       <option value="berlangsung">Berlangsung</option>
                       <option value="selesai">Selesai</option>
                       <option value="dibatalkan">Dibatalkan</option>

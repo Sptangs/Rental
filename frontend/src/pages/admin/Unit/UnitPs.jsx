@@ -140,8 +140,8 @@ const UnitPS = () => {
                 </Link>
               </div>
 
-              <table className="table table-striped table-bordered mt-2">
-                <thead className="table-light">
+              <table className="table table-striped table-bordered mt-2 text-center">
+                <thead className="table-light text-center">
                   <tr>
                     <th>No</th>
                     <th>Jenis PS</th>
@@ -177,20 +177,14 @@ const UnitPS = () => {
                           </span>
                         </td>
                         <td>{item.stok}</td>
-                        <td>
-                          <Link
-                            to={`/admin/editunit/${item.idunit}`}
-                            className="btn btn-warning btn-sm"
-                          >
-                            Edit
+                        <td className="text-center">
+                          <Link to={`/admin/editunit/${item.idunit}`} className="btn btn-warning btn-sm">
+                            <i className="	fas fa-edit"></i> Edit
                           </Link>
                         </td>
-                        <td>
-                          <button
-                            onClick={() => handleDelete(item.idunit)}
-                            className="btn btn-danger btn-sm"
-                          >
-                            Hapus
+                        <td className="text-center">
+                          <button onClick={() => handleDelete(item.idunit)} className="btn btn-danger btn-sm">
+                            <i className="fa fa-trash"></i> Hapus
                           </button>
                         </td>
                       </tr>

@@ -120,11 +120,17 @@ const deleteBooking = (id, callback) => {
     }
 }
 
+const updateStatusBooking = (idbooking, status, callback) => {
+    const q = "UPDATE booking SET status=? WHERE idbooking=?";
+    koneksi.query(q, [status, idbooking], callback);
+};
+
 module.exports = {
     selectBooking,
     insertBooking,
     updateBooking,
     deleteBooking,
     getHargaPerJam,
-    selectByIdBooking
+    selectByIdBooking,
+    updateStatusBooking
 }
